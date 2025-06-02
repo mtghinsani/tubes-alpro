@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../config.php'; 
+require '../config.php';
 
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../index.php");
@@ -9,6 +9,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_menu = htmlspecialchars($_POST['nama_menu']);
+    $category = htmlspecialchars($_POST['category']);
     $harga = (int) $_POST['harga'];
     $stok = (int) $_POST['stok'];
 
@@ -30,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!isset($error)) {
-        $query = "INSERT INTO menu (nama, harga, gambar, stok) VALUES ('$nama_menu', $harga, '$gambar_name', $stok)";
+        $query = "INSERT INTO menu (nama, category, harga, gambar, stok) VALUES ('$nama_menu', '$category', $harga, '$gambar_name', $stok)";
         if (mysqli_query($db, $query)) {
             $success = "Menu berhasil ditambahkan!";
         } else {
@@ -64,6 +65,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="mb-3">
             <label for="nama_menu" class="form-label">Nama Menu</label>
             <input type="text" id="nama_menu" name="nama_menu" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label for="category" class="form-label">Kategori</label>
+            <select id="category" name="category" class="form-control" required>
+                <option value="">Pilih Kategori</option>
+                <option value="coffee">Coffee</option>
+                <option value="tea">Tea</option>
+                <option value="snacks">Snacks</option>
+                <option value="desserts">Desserts</option>
+            </select>
         </div>
         <div class="mb-3">
             <label for="harga" class="form-label">Harga (Rp)</label>

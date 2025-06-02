@@ -23,6 +23,7 @@ if (!$menu) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama = htmlspecialchars($_POST['nama']);
+    $category = htmlspecialchars($_POST['category']);
     $harga = (int)$_POST['harga'];
     $stok = (int)$_POST['stok'];
 
@@ -32,14 +33,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tmp = $_FILES['gambar']['tmp_name'];
         move_uploaded_file($tmp, '../uploads/' . $gambar);
     } else {
-        $gambar = $menu['gambar']; 
+        $gambar = $menu['gambar'];
     }
 
-    $update = mysqli_query($db, "UPDATE menu SET 
-        nama = '$nama', 
-        harga = $harga, 
-        stok = $stok, 
-        gambar = '$gambar' 
+    $update = mysqli_query($db, "UPDATE menu SET
+        nama = '$nama',
+        category = '$category',
+        harga = $harga,
+        stok = $stok,
+        gambar = '$gambar'
         WHERE id_menu = $id");
 
     if ($update) {
@@ -65,6 +67,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="mb-3">
             <label for="nama" class="form-label">Nama Menu</label>
             <input type="text" class="form-control" id="nama" name="nama" required value="<?= htmlspecialchars($menu['nama']) ?>">
+        </div>
+        <div class="mb-3">
+            <label for="category" class="form-label">Kategori</label>
+            <select id="category" name="category" class="form-control" required>
+                <option value="">Pilih Kategori</option>
+                <option value="coffee" <?= (isset($menu['category']) && $menu['category'] === 'coffee') ? 'selected' : '' ?>>Coffee</option>
+                <option value="tea" <?= (isset($menu['category']) && $menu['category'] === 'tea') ? 'selected' : '' ?>>Tea</option>
+                <option value="snacks" <?= (isset($menu['category']) && $menu['category'] === 'snacks') ? 'selected' : '' ?>>Snacks</option>
+                <option value="desserts" <?= (isset($menu['category']) && $menu['category'] === 'desserts') ? 'selected' : '' ?>>Desserts</option>
+            </select>
         </div>
         <div class="mb-3">
             <label for="harga" class="form-label">Harga</label>
