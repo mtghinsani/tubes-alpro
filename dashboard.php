@@ -59,21 +59,11 @@ switch ($sort) {
 
 $menus = mysqli_query($db, $query);
 
-// Check if query was successful
-if (!$menus) {
-    die("Error in menu query: " . mysqli_error($db));
-}
-
 // Get categories for filter menu
 $categories_query = mysqli_query($db, "SELECT DISTINCT category FROM menu WHERE category IS NOT NULL AND category != ''");
 $categories = [];
-if ($categories_query) {
-    while ($cat = mysqli_fetch_assoc($categories_query)) {
-        $categories[] = $cat['category'];
-    }
-} else {
-    // If categories query fails, provide default categories
-    $categories = ['coffee', 'tea', 'snacks', 'desserts'];
+while ($cat = mysqli_fetch_assoc($categories_query)) {
+    $categories[] = $cat['category'];
 }
 
 include 'template/navbar.php';
@@ -86,9 +76,13 @@ include 'template/navbar.php';
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Dashboard CoffeeRight</title>
+<link rel="icon" href="assets/icon/favicon.ico" type="image/x-icon">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
+    html {
+        scroll-behavior: smooth;
+    }
     .gradient-bg {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
@@ -112,7 +106,17 @@ include 'template/navbar.php';
             <h1 class="text-4xl md:text-6xl font-bold mb-4">
                 ☕ Menu <span class="text-yellow-300">CoffeeRight</span>
             </h1>
-            <p class="text-xl md:text-2xl opacity-90">Nikmati kopi terbaik dengan cita rasa yang sempurna</p>
+            <p class="text-xl md:text-2xl opacity-90 mb-6">Nikmati kopi terbaik dengan cita rasa yang sempurna</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#menu" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-lg font-semibold transition duration-300 flex items-center gap-2">
+                    <i class="bi bi-eye"></i> Lihat Menu
+                </a>
+                <?php if ($role === 'customer'): ?>
+                <a href="customer/cart.php" class="bg-yellow-400 hover:bg-yellow-300 text-gray-800 px-6 py-3 rounded-lg font-semibold transition duration-300 flex items-center gap-2">
+                    <i class="bi bi-cart"></i> Lihat Keranjang
+                </a>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 
@@ -124,7 +128,7 @@ include 'template/navbar.php';
                 <h3 class="text-2xl font-bold text-gray-800 mb-4">Panel Admin</h3>
                 <div class="flex flex-wrap gap-4">
                     <a href="admin/tambah_menu.php" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition duration-300 flex items-center gap-2">
-                        <i class="bi bi-plus-circle"></i> Tambah Menu
+                        <i class="bi bi-plus-circle"></i> Tambah Menu                       
                     </a>
                     <a href="admin/log_activity.php" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold transition duration-300 flex items-center gap-2">
                         <i class="bi bi-activity"></i> Log Aktivitas
@@ -164,7 +168,16 @@ include 'template/navbar.php';
                     <?php foreach ($categories as $cat): ?>
                         <a href="?search=<?= urlencode($search) ?>&category=<?= urlencode($cat) ?>&sort=<?= urlencode($sort) ?>"
                            class="px-4 py-2 rounded-lg font-medium transition duration-300 <?= $category === $cat ? 'filter-active' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
-                            <?= htmlspecialchars(ucfirst($cat)) ?>
+                            <?php
+                            // Format category display name
+                            $display_name = $cat;
+                            if ($cat === 'non-coffee') {
+                                $display_name = 'Non Coffee';
+                            } else {
+                                $display_name = ucfirst($cat);
+                            }
+                            echo htmlspecialchars($display_name);
+                            ?>
                         </a>
                     <?php endforeach; ?>
                 </div>
@@ -184,7 +197,7 @@ include 'template/navbar.php';
         </div>
 
         <!-- Products Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div id="menu"class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         <?php
         $menu_count = 0;
         while ($menu = mysqli_fetch_assoc($menus)):
@@ -216,7 +229,16 @@ include 'template/navbar.php';
                     <?php if (!empty($menu['category'])): ?>
                         <div class="absolute top-4 left-4">
                             <span class="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                                <?= htmlspecialchars(ucfirst($menu['category'])) ?>
+                                <?php
+                                // Format category display name
+                                $display_name = $menu['category'];
+                                if ($menu['category'] === 'non-coffee') {
+                                    $display_name = 'Non Coffee';
+                                } else {
+                                    $display_name = ucfirst($menu['category']);
+                                }
+                                echo htmlspecialchars($display_name);
+                                ?>
                             </span>
                         </div>
                     <?php endif; ?>
@@ -237,13 +259,12 @@ include 'template/navbar.php';
                         </div>
                     </div>
 
-                    <!-- Action Buttons -->
                     <div class="space-y-2">
                         <?php if ($role === 'customer'): ?>
                             <form action="customer/add_to_cart.php" method="POST">
                                 <input type="hidden" name="id_menu" value="<?= $menu['id_menu'] ?>" />
                                 <button type="submit"
-                                        class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-3 px-4 rounded-lg font-semibold transition duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                                        class="w-full bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-800 hover:to-violet-900 text-white py-3 px-4 rounded-lg font-semibold transition duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
                                         <?= ((int)$menu['stok'] <= 0) ? 'disabled' : '' ?>>
                                     <i class="bi bi-cart-plus"></i>
                                     <?= ((int)$menu['stok'] <= 0) ? 'Stok Habis' : 'Tambah ke Keranjang' ?>
@@ -314,6 +335,9 @@ include 'template/navbar.php';
             });
         });
     </script>
+
+    <!-- Footer -->
+     <?php include 'template/footer.php'; ?>
 
 </body>
 </html>

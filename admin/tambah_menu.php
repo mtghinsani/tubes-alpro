@@ -47,49 +47,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8" />
     <title>Tambah Menu - Admin</title>
     <link href="../bootstrap-5.1.3-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(to right, #667eea 0%, #764ba2 100%);
+        }
+    </style>
 </head>
 <body>
-<div class="container mt-5">
-    <h2>Tambah Menu Kopi</h2>
-    <a href="../dashboard.php" class="btn btn-secondary mb-3">Kembali ke Dashboard</a>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow rounded-4">
+                <div class="card-body p-4">
+                    <h3 class="card-title mb-4 text-center">Tambah Menu Kopi</h3>
 
-    <?php if (isset($success)) : ?>
-        <div class="alert alert-success"><?= $success ?></div>
-    <?php endif; ?>
+                    <?php if (isset($success)) : ?>
+                        <div class="alert alert-success"><?= $success ?></div>
+                    <?php endif; ?>
 
-    <?php if (isset($error)) : ?>
-        <div class="alert alert-danger"><?= $error ?></div>
-    <?php endif; ?>
+                    <?php if (isset($error)) : ?>
+                        <div class="alert alert-danger"><?= $error ?></div>
+                    <?php endif; ?>
 
-    <form action="" method="post" enctype="multipart/form-data" class="w-50">
-        <div class="mb-3">
-            <label for="nama_menu" class="form-label">Nama Menu</label>
-            <input type="text" id="nama_menu" name="nama_menu" class="form-control" required />
+                    <form action="" method="post" enctype="multipart/form-data">
+                        <div class="form-floating mb-3">
+                            <input type="text" id="nama_menu" name="nama_menu" class="form-control" placeholder="Nama Menu" required />
+                            <label for="nama_menu">Nama Menu</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Kategori</label>
+                            <select id="category" name="category" class="form-select" required>
+                                <option value="">Pilih Kategori</option>
+                                <option value="coffee">Coffee</option>
+                                <option value="non-coffee">Non Coffee</option>
+                                <option value="tea">Tea</option>
+                                <option value="snacks">Snacks</option>
+                                <option value="desserts">Desserts</option>
+                            </select>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="number" id="harga" name="harga" class="form-control" placeholder="Harga" min="1" required />
+                            <label for="harga">Harga (Rp)</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="number" id="stok" name="stok" class="form-control" placeholder="Stok" min="0" required />
+                            <label for="stok">Stok</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="gambar" class="form-label">Gambar Menu</label>
+                            <input type="file" id="gambar" name="gambar" class="form-control" accept="image/*" required />
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <a href="../dashboard.php" class="btn btn-outline-secondary"><i class="bi bi-house-door"></i> Kembali</a>
+                            <button type="submit" class="btn btn-primary">Tambah Menu</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            <label for="category" class="form-label">Kategori</label>
-            <select id="category" name="category" class="form-control" required>
-                <option value="">Pilih Kategori</option>
-                <option value="coffee">Coffee</option>
-                <option value="tea">Tea</option>
-                <option value="snacks">Snacks</option>
-                <option value="desserts">Desserts</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="harga" class="form-label">Harga (Rp)</label>
-            <input type="number" id="harga" name="harga" class="form-control" min="1" required />
-        </div>
-        <div class="mb-3">
-            <label for="stok" class="form-label">Stok</label>
-            <input type="number" id="stok" name="stok" class="form-control" min="0" required />
-        </div>
-        <div class="mb-3">
-            <label for="gambar" class="form-label">Gambar Menu</label>
-            <input type="file" id="gambar" name="gambar" class="form-control" accept="image/*" required />
-        </div>
-        <button type="submit" class="btn btn-primary">Tambah Menu</button>
-    </form>
+    </div>
 </div>
 <script src="../bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js"></script>
 </body>
